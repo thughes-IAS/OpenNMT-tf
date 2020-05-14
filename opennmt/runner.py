@@ -205,6 +205,12 @@ class Runner(object):
       devices = misc.get_devices(count=num_devices)
       trainer = training_util.DistributionStrategyTrainer(
           model, optimizer, checkpoint=checkpoint, devices=devices)
+    
+    eval_steps=eval_config.get("steps", 5000),
+    if eval_steps==('None',):
+        eval_steps=None
+    print('eval_steps',eval_steps)
+
 
     trainer(
         dataset_fn,
@@ -213,7 +219,7 @@ class Runner(object):
         report_steps=train_config.get("save_summary_steps", 100),
         save_steps=train_config.get("save_checkpoints_steps", 5000),
         evaluator=evaluator,
-        eval_steps=eval_config.get("steps", 5000),
+        eval_steps=eval_steps,
         moving_average_decay=train_config.get("moving_average_decay"))
 
     if checkpoint is None:
